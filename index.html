@@ -27,7 +27,8 @@
             margin-bottom: 15px;
             object-fit: cover;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            background-color: #2f3136; /* 画像がない時の背景色 */
+            background-color: #2f3136; /* 画像が届くまでの仮の背景色 */
+            display: none;             /* 初期状態は非表示にして、届いたらJSで表示させる */
         }
 
         h1 {
@@ -78,7 +79,7 @@
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
             text-align: center;
-            margin-bottom: 15px; /* コピペボタンとの間に少し隙間をあける */
+            margin-bottom: 15px;
         }
 
         .discord-btn:hover {
@@ -86,7 +87,7 @@
             transform: translateY(-2px);
         }
 
-        /* 🔵 コピペボタンのスタイル */
+        /* コピペボタンのスタイル */
         .copy-btn {
             background: none;
             border: none;
@@ -110,7 +111,7 @@
 </head>
 <body>
 
-    <img src="https://imgur.com/a/H6HVZD6" alt="めじこんさば アイコン" class="server-icon" id="server-logo">
+    <img src="" alt="めじこんさば アイコン" class="server-icon" id="server-logo">
 
     <h1>めじこんさば</h1>
 
@@ -128,7 +129,7 @@
 
     <script>
         const SERVER_ID = '1493270400316997642';
-        const INVITE_URL = 'https://discord.gg/medicon'; // コピーさせるURL
+        const INVITE_URL = 'https://discord.gg/medicon';
 
         async function fetchDiscordStatus() {
             try {
@@ -138,6 +139,7 @@
                 const data = await response.json();
                 const onlineCount = data.presence_count ?? 0;
                 
+                // オンライン人数の書き換え
                 document.getElementById('discord-status').innerHTML = `
                     <div class="status-item">
                         <span class="dot-online"></span>
@@ -145,8 +147,15 @@
                     </div>
                 `;
 
-                // 💡 もしDiscordのウィジェットから直接サーバーアイコンを取得したい場合は、下の行のコメントアウト（//）を消してください
-                // document.getElementById('server-logo').src = `https://cdn.discordapp.com/icons/${SERVER_ID}/${data.instant_invite?.split('/').pop()}.png`;
+                // 🛠️ Discordのサーバー情報からアイコンの「ID」を引っ張ってきて画像を表示
+                if (data.instant_invite) {
+                    const inviteCode = data.instant_invite.split('/').pop();
+                    const logoImg = document.getElementById('server-logo');
+                    
+                    // 画像のURLをセットして、画面に表示させる
+                    logoImg.src = `https://cdn.discordapp.com/icons/${SERVER_ID}/${inviteCode}.png`;
+                    logoImg.style.display = 'block';
+                }
             } catch (error) {
                 document.getElementById('discord-status').innerHTML = `
                     <span style="color: #ff4747; font-size: 0.8rem;">ステータスを取得できませんでした</span>
@@ -155,22 +164,21 @@
             }
         }
 
-        // 🔵 リンクをコピーするプログラム
+        // リンクをコピーするプログラム
         function copyInviteLink(button) {
             navigator.clipboard.writeText(INVITE_URL).then(() => {
                 const originalText = button.innerText;
                 button.innerText = 'コピーしました！';
-                button.style.color = '#23a55a'; // 緑色にする
+                button.style.color = '#23a55a';
                 button.style.textDecoration = 'none';
                 
-                // 1.5秒後に元に戻す
                 setTimeout(() => {
                     button.innerText = originalText;
                     button.style.color = '';
                     button.style.textDecoration = '';
                 }, 1500);
             }).catch(err => {
-                alert('コピーに失敗しました。手動でコピーしてください: ' + INVITE_URL);
+                alert('コピーに失敗しました: ' + INVITE_URL);
             });
         }
 
