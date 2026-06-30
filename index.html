@@ -14,21 +14,27 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;         /* スマホのスクロール問題対策 */
+            padding: 20px;             /* 端に寄りすぎないように余白を追加 */
+            box-sizing: border-box;
             margin: 0;
         }
 
         /* 見出しのデザイン */
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-size: 2rem;           /* スマホに合わせたサイズ */
+            margin-bottom: 10px;
             letter-spacing: 2px;
+            text-align: center;
         }
 
         /* 説明文のデザイン */
         p {
             color: #aaaaaa;
-            margin-bottom: 30px;
+            font-size: 0.85rem;        /* 文字を小さくしてスッキリ配置 */
+            margin-bottom: 25px;
+            text-align: center;
+            line-height: 1.6;          /* 行間を広げて読みやすく */
         }
 
         /* Discordボタンのデザイン */
@@ -41,6 +47,7 @@
             font-weight: bold;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+            text-align: center;
         }
 
         /* ボタンにマウスを乗せたときの動き */
@@ -48,14 +55,23 @@
             background-color: #4752C4;
             transform: translateY(-2px);
         }
+
+        /* PC用のサイズ微調整（画面幅が600px以上の場合） */
+        @media (min-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            p { font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
 
-    <p>めじこんさばのさいとらしいよ</p>
-    <p>これからなにかつくるかもわら</p>
+    <!-- タイトルを追加してみました -->
+    <h1>めじこんさば</h1>
 
-    <!-- ただのURLを、クリックできるおしゃれなボタンに変更 -->
+    <!-- 小さくスッキリさせた説明文 -->
+    <p>めじこんさばのさいとらしいよ<br>これからなにかつくるかもわら</p>
+
+    <!-- Discordボタン -->
     <a href="https://discord.gg/medicon" target="_blank" class="discord-btn">
         めじこんさばにはいる
     </a>
