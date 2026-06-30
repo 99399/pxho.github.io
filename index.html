@@ -5,41 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>めじこんさば</title>
     <style>
-        /* 全体の背景や文字の色を設定 */
         body {
-            background-color: #1a1a1a; /* ダークモード風の黒 */
-            color: #ffffff;           /* 文字は白 */
+            background-color: #1a1a1a;
+            color: #ffffff;
             font-family: 'Helvetica Neue', Arial, sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;         /* スマホのスクロール問題対策 */
-            padding: 20px;             /* 端に寄りすぎないように余白を追加 */
+            min-height: 100vh;
+            padding: 20px;
             box-sizing: border-box;
             margin: 0;
         }
 
-        /* 見出しのデザイン */
         h1 {
-            font-size: 2rem;           /* スマホに合わせたサイズ */
+            font-size: 2rem;
             margin-bottom: 10px;
             letter-spacing: 2px;
             text-align: center;
         }
 
-        /* 説明文のデザイン */
         p {
             color: #aaaaaa;
-            font-size: 0.85rem;        /* 文字を小さくしてスッキリ配置 */
-            margin-bottom: 25px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
             text-align: center;
-            line-height: 1.6;          /* 行間を広げて読みやすく */
+            line-height: 1.6;
         }
 
-        /* Discordボタンのデザイン */
+        /* 🟢 オンライン人数の表示スタイル */
+        .status-container {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            background: #252525;
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid #333;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        /* オンラインの緑丸 */
+        .dot-online {
+            width: 8px;
+            height: 8px;
+            background-color: #23a55a;
+            border-radius: 50%;
+        }
+        /* 全員の灰色丸 */
+        .dot-total {
+            width: 8px;
+            height: 8px;
+            background-color: #80848e;
+            border-radius: 50%;
+        }
+
         .discord-btn {
-            background-color: #5865F2; /* Discordのブランドカラー */
+            background-color: #5865F2;
             color: white;
             text-decoration: none;
             padding: 12px 24px;
@@ -50,13 +77,11 @@
             text-align: center;
         }
 
-        /* ボタンにマウスを乗せたときの動き */
         .discord-btn:hover {
             background-color: #4752C4;
             transform: translateY(-2px);
         }
 
-        /* PC用のサイズ微調整（画面幅が600px以上の場合） */
         @media (min-width: 600px) {
             h1 { font-size: 2.5rem; }
             p { font-size: 1rem; }
@@ -65,16 +90,53 @@
 </head>
 <body>
 
-    <!-- タイトルを追加してみました -->
     <h1>めじこんさば</h1>
 
-    <!-- 小さくスッキリさせた説明文 -->
     <p>めじこんさばのさいとらしいよ<br>これからなにかつくるかもわら</p>
 
-    <!-- Discordボタン -->
+    <div class="status-container" id="discord-status">
+        <span style="color: #888;">情報を取得中...</span>
+    </div>
+
     <a href="https://discord.gg/medicon" target="_blank" class="discord-btn">
         めじこんさばにはいる
     </a>
+
+    <script>
+        // 👇 コピーした「サーバーID」をここに入れてください（例: '123456789012345678'）
+        const SERVER_ID = '1493270400316997642';
+
+        async function fetchDiscordStatus() {
+            try {
+                const response = await fetch(`https://discord.com/api/guilds/${SERVER_ID}/widget.json`);
+                if (!response.ok) throw new Error('取得失敗');
+                
+                const data = await response.json();
+                
+                // オンライン人数と総メンバー数を取得
+                const onlineCount = data.presence_count ?? 0;
+                // ※全メンバー数はDiscordの仕様上ウィジェットに入らないことがあるため、
+                // 代わりにボイスチャンネル等にいる「アクティブなメンバー一覧」の数などになる場合があります
+                
+                // 画面を書き換える
+                document.getElementById('discord-status').innerHTML = `
+                    <div class="status-item">
+                        <span class="dot-online"></span>
+                        <span>オンライン: <strong>${onlineCount}</strong>人</span>
+                    </div>
+                `;
+            } catch (error) {
+                // エラーが起きた（IDが違う、またはウィジェット設定がOFFなど）
+                document.getElementById('discord-status').innerHTML = `
+                    <span style="color: #ff4747; font-size: 0.8rem;">ステータスを取得できませんでした</span>
+                `;
+                console.error(error);
+            }
+        }
+
+        // ページが開かれたら実行
+        fetchDiscordStatus();
+    </script>
 
 </body>
 </html>
