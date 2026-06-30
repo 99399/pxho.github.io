@@ -19,6 +19,17 @@
             margin: 0;
         }
 
+        /* 🔵 サーバーアイコンのスタイル */
+        .server-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            background-color: #2f3136; /* 画像がない時の背景色 */
+        }
+
         h1 {
             font-size: 2rem;
             margin-bottom: 10px;
@@ -34,7 +45,7 @@
             line-height: 1.6;
         }
 
-        /* 🟢 オンライン人数の表示スタイル */
+        /* オンライン人数の表示スタイル */
         .status-container {
             display: flex;
             gap: 15px;
@@ -50,18 +61,10 @@
             align-items: center;
             gap: 6px;
         }
-        /* オンラインの緑丸 */
         .dot-online {
             width: 8px;
             height: 8px;
             background-color: #23a55a;
-            border-radius: 50%;
-        }
-        /* 全員の灰色丸 */
-        .dot-total {
-            width: 8px;
-            height: 8px;
-            background-color: #80848e;
             border-radius: 50%;
         }
 
@@ -75,6 +78,7 @@
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
             text-align: center;
+            margin-bottom: 15px; /* コピペボタンとの間に少し隙間をあける */
         }
 
         .discord-btn:hover {
@@ -82,13 +86,31 @@
             transform: translateY(-2px);
         }
 
+        /* 🔵 コピペボタンのスタイル */
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #5865F2;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s;
+            padding: 5px 10px;
+        }
+        .copy-btn:hover {
+            color: #7289da;
+        }
+
         @media (min-width: 600px) {
             h1 { font-size: 2.5rem; }
             p { font-size: 1rem; }
+            .server-icon { width: 100px; height: 100px; }
         }
     </style>
 </head>
 <body>
+
+    <img src="https://imgur.com/a/H6HVZD6:" alt="めじこんさば アイコン" class="server-icon" id="server-logo">
 
     <h1>めじこんさば</h1>
 
@@ -102,9 +124,11 @@
         めじこんさばにはいる
     </a>
 
+    <button class="copy-btn" onclick="copyInviteLink(this)">招待リンクをコピーする</button>
+
     <script>
-        // 👇 コピーした「サーバーID」をここに入れてください（例: '123456789012345678'）
         const SERVER_ID = '1493270400316997642';
+        const INVITE_URL = 'https://discord.gg/medicon'; // コピーさせるURL
 
         async function fetchDiscordStatus() {
             try {
@@ -112,21 +136,18 @@
                 if (!response.ok) throw new Error('取得失敗');
                 
                 const data = await response.json();
-                
-                // オンライン人数と総メンバー数を取得
                 const onlineCount = data.presence_count ?? 0;
-                // ※全メンバー数はDiscordの仕様上ウィジェットに入らないことがあるため、
-                // 代わりにボイスチャンネル等にいる「アクティブなメンバー一覧」の数などになる場合があります
                 
-                // 画面を書き換える
                 document.getElementById('discord-status').innerHTML = `
                     <div class="status-item">
                         <span class="dot-online"></span>
                         <span>オンライン: <strong>${onlineCount}</strong>人</span>
                     </div>
                 `;
+
+                // 💡 もしDiscordのウィジェットから直接サーバーアイコンを取得したい場合は、下の行のコメントアウト（//）を消してください
+                // document.getElementById('server-logo').src = `https://cdn.discordapp.com/icons/${SERVER_ID}/${data.instant_invite?.split('/').pop()}.png`;
             } catch (error) {
-                // エラーが起きた（IDが違う、またはウィジェット設定がOFFなど）
                 document.getElementById('discord-status').innerHTML = `
                     <span style="color: #ff4747; font-size: 0.8rem;">ステータスを取得できませんでした</span>
                 `;
@@ -134,7 +155,25 @@
             }
         }
 
-        // ページが開かれたら実行
+        // 🔵 リンクをコピーするプログラム
+        function copyInviteLink(button) {
+            navigator.clipboard.writeText(INVITE_URL).then(() => {
+                const originalText = button.innerText;
+                button.innerText = 'コピーしました！';
+                button.style.color = '#23a55a'; // 緑色にする
+                button.style.textDecoration = 'none';
+                
+                // 1.5秒後に元に戻す
+                setTimeout(() => {
+                    button.innerText = originalText;
+                    button.style.color = '';
+                    button.style.textDecoration = '';
+                }, 1500);
+            }).catch(err => {
+                alert('コピーに失敗しました。手動でコピーしてください: ' + INVITE_URL);
+            });
+        }
+
         fetchDiscordStatus();
     </script>
 
