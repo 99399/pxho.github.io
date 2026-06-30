@@ -2,10 +2,63 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Web Site</title>
+    <style>
+        /* 全体の背景や文字の色を設定 */
+        body {
+            background-color: #1a1a1a; /* ダークモード風の黒 */
+            color: #ffffff;           /* 文字は白 */
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* 見出しのデザイン */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        /* 説明文のデザイン */
+        p {
+            color: #aaaaaa;
+            margin-bottom: 30px;
+        }
+
+        /* Discordボタンのデザイン */
+        .discord-btn {
+            background-color: #5865F2; /* Discordのブランドカラー */
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+        }
+
+        /* ボタンにマウスを乗せたときの動き */
+        .discord-btn:hover {
+            background-color: #4752C4;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
+
     <h1>ここには何もないようだ</h1>
-    <p>https://discord.gg/medicon</p>
+    <p>わら</p>
+
+    <!-- ただのURLを、クリックできるおしゃれなボタンに変更 -->
+    <a href="https://discord.gg/medicon" target="_blank" class="discord-btn">
+        Discordに参加する
+    </a>
+
 </body>
 </html>
